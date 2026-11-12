@@ -4,168 +4,50 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>UltraTCG Wishlist</title>
+<title>TCG Inventory</title>
 
-<style>
-body {
-    background:#121212;
-    color:white;
-    font-family:Arial, sans-serif;
-    margin:0;
-    padding:20px;
-}
+<link rel="stylesheet" href="style.css">
 
-h1{
-    text-align:center;
-    color:#FFD700;
-}
-
-.header{
-    text-align:center;
-    margin-bottom:20px;
-}
-
-.header a{
-    color:#FF69B4;
-    text-decoration:none;
-    font-weight:bold;
-}
-
-.progress{
-    text-align:center;
-    margin-bottom:20px;
-    font-size:18px;
-}
-
-.grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-    gap:20px;
-}
-
-.card{
-    background:#1e1e1e;
-    border-radius:12px;
-    padding:15px;
-    text-align:center;
-}
-
-.card img{
-    width:100%;
-    border-radius:10px;
-}
-
-.priority{
-    padding:6px 12px;
-    border-radius:20px;
-    display:inline-block;
-    font-weight:bold;
-    margin:10px 0;
-}
-
-.high{
-    background:#dc3545;
-}
-
-.medium{
-    background:#fd7e14;
-}
-
-.low{
-    background:#28a745;
-}
-
-.chase{
-    background:#6f42c1;
-}
-
-.checkbox{
-    margin-top:10px;
-    font-size:16px;
-}
-</style>
 </head>
-
 <body>
 
-<h1>🎴 Aaron's Ultra TCG Wishlist 🎴</h1>
+<header>
+    <h1>🎴 Mijn TCG Inventory</h1>
+</header>
 
-<div class="header">
-    <p>Geïnspireerd door Ultra TCG</p>
-    <a href="https://www.instagram.com/ultra_tcg.be/" target="_blank">
-        📸 Volg Ultra TCG op Instagram
-    </a>
-</div>
+<div class="filters">
 
-<div class="progress">
-    ✅ Verzameld: <span id="count">0</span>/4
-</div>
+    <input type="text" id="nameFilter" placeholder="Zoek op naam">
 
-<div class="grid">
+    <select id="speciesFilter">
+        <option value="">Alle soorten</option>
+    </select>
 
-    <div class="card">
-        <img src="https://images.pokemontcg.io/swsh7/215_hires.png">
-        <h3>Umbreon VMAX</h3>
-        <p>Evolving Skies #215</p>
-        <div class="priority chase">CHASE</div>
+    <select id="typeFilter">
+        <option value="">Alle types</option>
+    </select>
 
-        <div class="checkbox">
-            <input type="checkbox" class="wishlist">
-            Verkregen
-        </div>
-    </div>
+    <select id="yearFilter">
+        <option value="">Alle jaren</option>
+    </select>
 
-    <div class="card">
-        <img src="https://images.pokemontcg.io/swsh7/218_hires.png">
-        <h3>Rayquaza VMAX</h3>
-        <p>Evolving Skies #218</p>
-        <div class="priority high">HOOG</div>
+    <select id="setFilter">
+        <option value="">Alle sets</option>
+    </select>
 
-        <div class="checkbox">
-            <input type="checkbox" class="wishlist">
-            Verkregen
-        </div>
-    </div>
+    <select id="eraFilter">
+        <option value="">Alle eras</option>
+    </select>
 
-    <div class="card">
-        <img src="https://images.pokemontcg.io/sv3pt5/199_hires.png">
-        <h3>Charizard ex</h3>
-        <p>151 #199</p>
-        <div class="priority high">HOOG</div>
-
-        <div class="checkbox">
-            <input type="checkbox" class="wishlist">
-            Verkregen
-        </div>
-    </div>
-
-    <div class="card">
-        <img src="https://images.pokemontcg.io/swsh8/271_hires.png">
-        <h3>Gengar VMAX</h3>
-        <p>Fusion Strike #271</p>
-        <div class="priority medium">GEMIDDELD</div>
-
-        <div class="checkbox">
-            <input type="checkbox" class="wishlist">
-            Verkregen
-        </div>
-    </div>
+    <button id="favoritesOnly">
+        ⭐ Alleen favorieten
+    </button>
 
 </div>
 
-<script>
-const checkboxes = document.querySelectorAll('.wishlist');
-const counter = document.getElementById('count');
+<div id="cardContainer"></div>
 
-function updateCounter() {
-    let checked = document.querySelectorAll('.wishlist:checked').length;
-    counter.textContent = checked;
-}
-
-checkboxes.forEach(box => {
-    box.addEventListener('change', updateCounter);
-});
-</script>
+<script src="script.js"></script>
 
 </body>
 </html>
