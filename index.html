@@ -2,52 +2,389 @@
 <html lang="nl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>TCG Inventory</title>
+<title>UltraTCG Inventory</title>
 
-<link rel="stylesheet" href="style.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+
+body{
+    background:#121212;
+    color:white;
+}
+
+.card{
+    background:#1d1d1d;
+}
+
+.card img{
+    height:350px;
+    object-fit:contain;
+}
+
+.favorite{
+    color:gold;
+}
+
+.cart-counter{
+    position:fixed;
+    top:10px;
+    right:20px;
+    z-index:999;
+}
+
+</style>
 
 </head>
+
 <body>
 
-<header>
-    <h1>🎴 Mijn TCG Inventory</h1>
-</header>
+<div class="container mt-4">
 
-<div class="filters">
+    <h1 class="mb-4">
+        🎴 UltraTCG Inventory
+    </h1>
 
-    <input type="text" id="nameFilter" placeholder="Zoek op naam">
+    <div class="cart-counter">
+        🛒 <span id="cartCount">0</span>
+    </div>
 
-    <select id="speciesFilter">
-        <option value="">Alle soorten</option>
-    </select>
+    <div class="row mb-3">
 
-    <select id="typeFilter">
-        <option value="">Alle types</option>
-    </select>
+        <div class="col-md-6">
+            <input
+            id="search"
+            class="form-control"
+            placeholder="Zoek Pokémon">
+        </div>
 
-    <select id="yearFilter">
-        <option value="">Alle jaren</option>
-    </select>
+        <div class="col-md-4">
+            <input
+            id="setFilter"
+            class="form-control"
+            placeholder="Filter op set">
+        </div>
 
-    <select id="setFilter">
-        <option value="">Alle sets</option>
-    </select>
+        <div class="col-md-2">
+            <button
+            class="btn btn-warning w-100"
+            onclick="showCart()">
+            Winkelmandje
+            </button>
+        </div>
 
-    <select id="eraFilter">
-        <option value="">Alle eras</option>
-    </select>
+    </div>
 
-    <button id="favoritesOnly">
-        ⭐ Alleen favorieten
-    </button>
+    <div class="row" id="cards"></div>
 
 </div>
 
-<div id="cardContainer"></div>
+<div
+class="modal fade"
+id="cartModal">
 
-<script src="script.js"></script>
+<div class="modal-dialog modal-lg">
+
+<div class="modal-content bg-dark text-white">
+
+<div class="modal-header">
+<h5>Winkelmandje</h5>
+<button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+</div>
+
+<div class="modal-body">
+
+<div id="cartItems"></div>
+
+<hr>
+
+<h5>Bestelling plaatsen</h5>
+
+<input id="customerName"
+class="form-control mb-2"
+placeholder="Naam">
+
+<input id="customerMail"
+class="form-control mb-2"
+placeholder="Email">
+
+<textarea
+id="notes"
+class="form-control"
+placeholder="Opmerking">
+</textarea>
+
+</div>
+
+<div class="modal-footer">
+
+<button
+class="btn btn-success"
+onclick="placeOrder()">
+
+Bestellen & Afhalen
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+
+let cards=[]
+let cart=[]
+
+async function loadCards(){
+
+const response=await fetch(
+'https://api.pokemontcg.io/v2/cards?pageSize=50'
+)
+
+const data=await response.json()
+
+cards=data.data
+
+renderCards()
+
+}
+
+function renderCards(){
+
+const search=
+document.getElementById("search")
+.value
+.toLowerCase()
+
+const setFilter=
+document.getElementById("setFilter")
+.value
+.toLowerCase()
+
+let html=""
+
+cards
+.filter(card=>{
+
+return card.name
+.toLowerCase()
+.includes(search)
+
+&&
+
+card.set.name
+.toLowerCase()
+.includes(setFilter)
+
+})
+
+.forEach(card=>{
+
+html+=`
+
+<div class="col-md-3 mb-4">
+
+<div class="card h-100">
+
+<img
+src="${card.images.large}"
+class="card-img-top">
+
+<div class="card-body">
+
+<h6>${card.name}</h6>
+
+<p>${card.set.name}</p>
+
+<p>${card.rarity || ''}</p>
+
+<button
+class="btn btn-primary w-100 mb-2"
+onclick="addToCart('${card.id}')">
+
+Toevoegen
+
+</button>
+
+<button
+class="btn btn-warning w-100"
+onclick="toggleFavorite('${card.id}')">
+
+⭐ Favoriet
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+`
+})
+
+document.getElementById("cards")
+.innerHTML=html
+
+}
+
+function addToCart(id){
+
+const card=cards.find(
+c=>c.id===id
+)
+
+cart.push(card)
+
+localStorage.setItem(
+"cart",
+JSON.stringify(cart)
+)
+
+updateCartCounter()
+
+}
+
+function updateCartCounter(){
+
+document.getElementById(
+"cartCount"
+).innerText=cart.length
+
+}
+
+function toggleFavorite(id){
+
+let favorites=
+
+JSON.parse(
+localStorage.getItem("favorites")
+||"[]"
+)
+
+if(favorites.includes(id))
+favorites=favorites.filter(
+f=>f!==id
+)
+
+else
+favorites.push(id)
+
+localStorage.setItem(
+"favorites",
+JSON.stringify(favorites)
+)
+
+alert("Favoriet opgeslagen")
+
+}
+
+function showCart(){
+
+let html=""
+
+cart.forEach(card=>{
+
+html+=`
+
+<div>
+
+${card.name}
+
+</div>
+
+`
+
+})
+
+document.getElementById(
+"cartItems"
+).innerHTML=html
+
+new bootstrap.Modal(
+document.getElementById(
+"cartModal"
+)
+).show()
+
+}
+
+function placeOrder(){
+
+const order={
+
+name:
+document.getElementById(
+"customerName"
+).value,
+
+email:
+document.getElementById(
+"customerMail"
+).value,
+
+notes:
+document.getElementById(
+"notes"
+).value,
+
+cards:cart,
+
+date:new Date()
+
+}
+
+console.log(order)
+
+alert(
+
+"Bestelling ontvangen.\n\n"
+
++
+
+"Je bestelling staat klaar voor afhaling zodra je bevestiging ontvangt."
+
+)
+
+localStorage.removeItem("cart")
+
+cart=[]
+
+updateCartCounter()
+
+}
+
+document
+.getElementById("search")
+.addEventListener("input",
+renderCards)
+
+document
+.getElementById("setFilter")
+.addEventListener("input",
+renderCards)
+
+cart=
+
+JSON.parse(
+localStorage.getItem("cart")
+||"[]"
+)
+
+updateCartCounter()
+
+loadCards()
+
+</script>
 
 </body>
 </html>
