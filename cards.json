@@ -1,0 +1,24 @@
+[
+  {
+    "id":1,
+    "name":"Charizard ex",
+    "species":"Charizard",
+    "type":"Fire",
+    "year":"2023",
+    "set":"151",
+    "era":"Scarlet & Violet",
+    "amount":4,
+    "image":"images/charizard.jpg"
+  },
+  {
+    "id":2,
+    "name":"Pikachu",
+    "species":"Pikachu",
+    "type":"Electric",
+    "year":"2025",
+    "set":"Surging Sparks",
+    "era":"Scarlet & Violet",
+    "amount":8,
+    "image":"images/pikachu.jpg"
+  }
+]
